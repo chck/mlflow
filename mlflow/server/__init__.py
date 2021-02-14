@@ -4,6 +4,7 @@ import sys
 import textwrap
 
 from flask import Flask, send_from_directory, Response
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from mlflow.server import handlers
 from mlflow.server.handlers import (
@@ -23,6 +24,12 @@ PROMETHEUS_EXPORTER_ENV_VAR = "prometheus_multiproc_dir"
 REL_STATIC_DIR = "js/build"
 
 app = Flask(__name__, static_folder=REL_STATIC_DIR)
+
+# werkzeug forwards certain HTTP headers wrongly when behind a proxy.
+# This line allows running the mlflow server behind an ingress like traefik
+# which is often the case in a Kubernetes cluster.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_port=1, x_for=1, x_host=1, x_prefix=1)
+
 STATIC_DIR = os.path.join(app.root_path, REL_STATIC_DIR)
 
 
