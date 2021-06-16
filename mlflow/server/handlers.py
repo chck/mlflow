@@ -805,7 +805,7 @@ def _get_paths(base_path):
     We should register paths like /api/2.0/preview/mlflow/experiment and
     /ajax-api/2.0/preview/mlflow/experiment in the Flask router.
     """
-    return ["/api/2.0{}".format(base_path), _add_static_prefix("/ajax-api/2.0{}".format(base_path))]
+    return ["/api/2.0{}".format(base_path), _add_static_prefix("/ajax-api/2.0{}".format(base_path)), _add_static_prefix("/api/2.0{}".format(base_path))]
 
 
 def get_handler(request_class):
